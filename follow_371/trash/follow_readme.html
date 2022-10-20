@@ -1,0 +1,789 @@
+<!DOCTYPE HTML>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width", initial-scale=1.0">
+<style>
+body { max-width: 900px; width: 99%; margin-right: 0.5%; margin-left: 0.5%; }
+.tab { border: thin black solid; margin-top:0.5em; margin-bottom:0.5em;
+       width: 97%; table-layout: fixed; }
+.indent { margin-left: 3%; }
+.tab td:first-child { width: 17%; word-break: break-word; }
+.tab td:last-child { width: 83%; }
+.tab td { padding:0.2em; vertical-align: top; }
+.tab tr:nth-child(even) { background-color: #eee; }
+.tab table td:first-child { width: auto; }
+.tab table td:last-child { width: auto; }
+.tab table th { border-bottom: 1px black solid; border-right: 1px black solid; }
+.tab table td { border-right: 1px black solid; }
+li { margin-bottom: 5px; }
+pre { overflow-x: auto; }
+.divtab { display: flex; align-items: center; width: 100% !important; overflow-x: auto; }
+.divkop { border-bottom: 1px solid black; margin-bottom:5px; padding-left: 15px; white-space: nowrap; }
+.divhok { padding-left: 15px; padding-right: 15px; border-left: 1px solid black; white-space: nowrap; }
+</style>
+</head><body>
+
+<h3>Follow</h3>
+<p><em>Follow</em> is a program that displays a musical score and shows a cursor in the score that
+follows what you play. The program listens to a midi interface to read the notes that you play. When you have no
+midi interface you can use the build in keyboard on the screen.
+You can also use an audio-pitch recognizer that outputs a midi stream.</p>
+<p>You can select a staff that you want to play and the program will play all other staves while following
+you on the selected staff. So you hear your self accompanied.</p>
+<p>The program can also play an audio file (that is synchronized to the score) and
+it checks the notes you play to the actual notes in the score.
+The cursor is colored red if your notes are wrong.
+<em>Follow</em> can import timing data from
+<a href="https://wim.vree.org/js/">abcweb</a> to synchronize any audio file to the score.</p>
+<p>The program also measures the timing of your performance.
+It can mark notes that you played too late or too early and also notes that you played with a wrong
+duration. It also computes a score that reaches 100% when all notes are played correct, on time and with
+the right duration. For all note errors, timing errors and duration errors a penalty is subtracted from
+the score.</p>
+<p><em>Follow</em> can also be used in a concert setup, where multiple devices show different parts of the same
+score. A master device determines the tempo and all other (slave) devices follow. The master can either use
+the play back feature or actually follow a midi instrument played by the director (or solist).
+(see the <a href="#server">synchronization feature</a> of <em>Follow</em>)
+</p>
+
+<h3>The Menu Bar</h3>
+<table class="indent tab">
+<a name="bar"></a>
+<tr><td>
+<img src="data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAlCAYAAACzpJKIAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAMGSURBVE
+iJtddNiFZlFAfw3/u+1mgpBkVOg9FUGjiZ0cciISKZxqJw0a4IJAOpReDeQEgIQlpU1MqgMjctir4Dx7CCog9ioKJPF0VNWtnHRFpWji3OM3Xf673Pvc4w/83wnHOe879zPp+3ox3ew4qMfirpj+WcLGhBdC5W4zL8XWPzFi7H+3Mlux5v4vOMzZ5klyXrtiAbw3iDzV
+5c18JXFl0cwpoGu0H8icVzIbsS36HTwvYj3JgzaArjeryG4wXZKrxScXfOodyHjSXZw5gWVVrETfhwtkSLRR4GS/IHRT+VyU5P9ufUOcyV/jX4EgdL8jNECE8tyQ/jXYxiNxZiC5bgN+zI5WxM9E8ZUyKMf1XoinnbhvuwFZMZHvAxbqiQ70xk51forkqOV+GoKKxpfC
+BT0cvxB06r0D2aIevhZ7yOfxLZUTHqakt/FG/jSIWuq78VijiGN/CO/4fyTkxQXyC5EbVAhKTuQ8dFnp7Cc4m8Fh18jytq9A+lrz6vRr9JhHlZWVH1dWsS4USNs6Xp3ikVukXiv/oJK9uQzYyo6RqyX9WX/lZ8hee1HF17cEdG/5gokAtL8hHRgytxi1ioWSwSJb88Y/
+OIyNlwQdYRC3ZbOp8lSn5p8WI5jFeLMHybIes5sUE3JYL70/kQPsG1ObI2W7mX/s4Qno0duEt/Hsc15G0CGxrIXhA5W53OT+LxCrv1+KzOyaCI85IGslvxu1hBo6Inz6ywWygmUHkVgdtEkpswgh+Ssy9we8Z2r8gn+hP9NNZqXgcDYghPiqr9NGM7JLb3hiJZJ11+QP
+59eLJYgXvE6PpveF8sRkyv5tJs0cWPuHTmQJT8Pg1v9VlgOvkdK5M19dds0ffEGxClPDxPZMPiMTRAjJT980Q0g/1Y18NmHMDL80g2gqGOeC8MiUa9SH9FTom3fhsM4IKS7IDYf8sw2cG6AsF2/CLeDXfiRbzUkqyLZ/BEItkuovZN0p9Q6VvwqliAh+V/2lbhWdyLm+
+XXFLhEdPpxfH2SRHB34f6usvJf+GCpFLS916wAAAAASUVORK5CYII="/>
+</td>
+    <td>The metronome symbol flashes red when the metronome is running.
+    When you click this symbol playback starts with the metronome on (flash + click sound).
+    When you click this symbol while the metronome is running it stops the metronome.
+    <br>With the input field to the right of the metronome you can change the score tempo. For instance,
+    when you want to play slower.
+    If an audio file is playing, the tempo of the audio is also changed.
+    </td></tr>
+<tr><td><em>Performance Bar</em></td>
+    <td>The bar displays your timing errors (see <a href="#fmd">follow mode</a>). The number in the bar indicates
+    the difference in milliseconds between your note and the score time. A negative number means that you played to
+    early, a positive number means you played too late. The colored bar represents the average absolute error of
+    your last 10 notes. An orange or red color warns you when the average becomes too much.
+    </td></tr>
+<tr><td><em>Start</em></td>
+    <td>Starts play back (in the selected <a href="#fmd">follow mode</a>). Normally a count-in is displayed
+    before play back really starts. The count-in can be disabled by checking menu item
+    <em>No count-in</em> in the <a href="#tmenu">Timing menu</a>.
+    The computer can also play the score with the internal synthesizer or on the
+    connected MIDI device (see <a href="#oport">Output port</a>).
+    The notes you play yourself are always echoed on the selected output port unless
+    you uncheck the <a href="#echo">Midi echo</a> option.<br>
+    When the internal sythesizer is selected in combination with &quot;mute own staff&quot;, the
+    computer plays all staves, except the one you play your self.
+    </td></tr>
+<tr><td>&#9673;</td>
+    <td>Microphone symbol. Its color is brown when the microphone is on. Dark-grey when the microphone is off. The symbol
+    is clickable and toggles the microphone on/off. It is a shortcut for the <a href="#micdlg">use microphone</a> checkbox
+    in the microphone dialog.
+    </td></tr>
+<tr><td><em>Volume Slider</em></td>
+    <td>Sets the volume of the internal synthesizer. Useful to balance the synthesizer and the audio player
+    if an audio file is used.
+    </td></tr>
+<tr><td><svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="spkron" viewBox="0 0 24 24" width="24px">
+    <polygon id="spk1" points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="spk2" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </svg></td>
+    <td>When an audio file is present, you can enable/disable sound, by clicking this icon.
+    </td></tr>
+<tr><td><em>Score</em></td>
+    <td>Here you can see how well you are playing. The score value is updated while you are playing
+    and increases until 100% when you make no errors and play all notes at the right time and with
+    the right duration.
+    <br>The timing and duration checks can be dis/enabled with
+    checkboxes in the menu. When these are not checked (default) only wrong notes
+    are subtracted from the score.
+    The score value is computed as follows:<br>
+    <em>score</em> = (<em>correct notes</em> - 0.5 * <em>wrong notes</em> - 0.5 * <em>late notes</em>
+    - 0.5 <em>duration errors</em>) / <em>total number of notes</em>
+    <br>
+    Each term in the error calculation is shown with the same background color
+    as used for marking the offending notes in the score.
+    The factor 0.5 for wrong notes, late notes and duration errors can be changed with URL options.
+    </td></tr>
+<tr><td><em>Resizing</em></td>
+    <td>Dragging (touch-hold-move) downwards in the timing bar area resizes the bar. 
+    </td></tr>
+</table>
+
+<h3>The on-screen Keyboard</h3>
+<table class="indent tab">
+<a name="keyb"></a>
+<tr><td><em>Touch/Click area</em></td>
+<td>The on-screen keyboard (see <a href="#mkeyb">menu</a> to enable) has a sensitve area above the keys,
+stretching along the whole keyboard.<br>
+When you <em>click/touch-and-hold</em> in this area it lights up green and you can shift or resize the keyboard.
+Dragging upwards enlarges the keys vertically (makes them <em>longer</em>) and dragging downwards makes them
+<em>shorter</em>. Dragging sidewards shifts the keyboard to the left or right.
+</td></tr>
+<tr><td><em>Green +/- buttons</em></td>
+<td>A <em>click/touch-and-hold</em> on these buttons to make the keys <em>broader</em> (+) or <em>smaller</em> (-).<br>
+</td></tr>
+</table>
+
+
+<a name="menu"></a>
+<h3>The File Menu</h3>
+<table class="indent tab">
+<tr><td><em>Score file</em></td>
+    <td>Browse the local file system and select a score file. The file can either contain MusicXML or ABC notation.
+    The selected file is opened and the score rendered on the screen.
+    In addition you can also select an audio file (.mp3 or .ogg) or a preload file.
+    </td></tr>
+<tr><td><em>Use Dropbox</em></td>
+    <td>Change the score file button into the Dropbox Chooser button to browse files in your dropbox.
+    </td></tr>
+<tr><td><em>Full Screen</em></td>
+    <td>Switches the browser to full screen display (if supported).
+    </td></tr>
+<tr><td><a name="cmd"></a><em>Check mode</em></td>
+    <td>Notes you play are followed in the score. Which notes you have to play is determined by one of the three 
+    <em>check modes</em>:<ul>
+        <li><b>Top notes of selected staff</b>: Only the top most notes of the selected staff have to be played. When
+        the staff has more voices or layers the top note of each of them must be played. In fact, &apos;top&apos;
+        only refers to chords.</li>
+        <li><b>All notes of selected staff</b>: You have to play all notes (of all voices) in a staff.</li>
+        <li><b>All notes of grand staff</b>: You have to play all notes (of all voices) in the selected grand staff. A grand
+        staff is selected by clicking in the topmost staff of the grand staff. The staff below is then added to make a grand
+        staff.
+        </li>
+        <li><b>All notes of all staves</b>: In this mode all staves are taken into account. You have to play all notes
+        in all staves of the score.</li>
+    </ul></td></tr>
+<tr><td><a name="fmd"></a><em>Follow mode</em></td>
+    <td>The aim of this program is to display a cursor in the score that follows what you play on a midi instrument.
+    You can select one of three modes to determine <em>how</em> the notes you play are followed and checked.
+    <ul>
+        <li><b>Playback (default)</b> The cursor continues even if you do not play any notes yourself.
+        If you do play notes
+        they are checked against the current cursor position and the score is computed. 
+        So even in playback mode you can
+        attain a 100% score if you play all notes at the right time.
+        If you skip a note is will be marked (and counted) as an error (YELLOW) when you also
+        have the option <em>check timing</em> enabled.
+        </li>
+        <li><b>Constant tempo</b>. In this mode you have to play with the tempo of the metronome.
+        The metronome starts when you press the start button (or play the central C, or 
+        play the first note(s) of the score).
+        After the count-in, you have to play the notes selected by the cursor in the tempo of the
+        metronome.
+        <br>When you play a wrong note the cursor stops. Once you play the right note, the cursor
+        resumes moving. When you skip a note, the cursor also stops on that note. You have to play all
+        notes.
+        <br>If there is
+        a synchronized audio file playing it also stops when the cursor stops and also
+        resumes at the correct position once
+        you play the right note(s).
+        </li>
+        <li><b>Adaptive</b>. In this mode the tempo is no contraint on your performance. The tempo just
+        follows your playing speed. The program only checks if you correctly play the notes selected by the cursor.
+        If so, it moves the cursor to the next position in the score. If not, the cursor waits on you and decreases
+        the metronome tempo. If you play too early (faster) the metronome tempo increases.
+        With the metronome tempo also accompanied notes and audio (if present) change speed.
+        <br>In this mode the cursor moves to the next note well before it has to be played. This allows you to
+        play faster than the metronome tempo, in which case the tempo will slowly increase.
+        <br>The permanent marks for real errors is YELLOW, not RED. Once you make the error the cursor becomes
+        RED, but when it moves to the next note, the previous (error) becomes YELLOW.
+        </li>
+    </ul>
+    The cursor
+    always gets one of the following colors: BLUE means you did not play anything, GREEN means you played the right
+    note(s) at the right time, RED means you played one or more wrong notes, ORANGE means a note was played with
+    the wong duration (too short or too long), GOLD means a note was played too late or too early.
+    All errors leave permanent marks in the score with the same colors as the cursor, so you can see afterwards
+    where you made which errors. Also the score computation shows the penalties with these same colors. So you
+    can see which penalty belongs to which type of error.
+    </td></tr>
+<tr><td><em><a name="oport">Synthesizer</a></em></td>
+    <td>This selection control can be used to activate the internal synthesizer
+    or to select a midi output port. A midi output port is only available when the browser
+    supports midi and the computer has a midi interface (connected to a midi instrument or
+    sound module). When the option &quot;No sound&quot; is selected the internal synthesizer
+    is disabled and no output is sent to MIDI. The audio player can still produce sound
+    when an audio file is loaded.<br>
+    The default selection is &quot;Internal synth&quot;.
+    </td></tr>
+<tr><td><a name="mkeyb"></a><em>Keyboard</em></td>
+    <td>Shows a keyboard where you can play the required notes. It is useful if you have no midi keyboard available. The keys
+    can be moved and scaled by dragging (horizontally and vertially) in a small area just above the keyboard.
+    There are also two +/- buttons. When you press-and-hold on these buttons,
+    the keyboard is resized (scaled) in horizontal direction, i.e. the keys become larger/smaller.
+    </td></tr>
+<tr><td><em>Show notes</em></td>
+    <td> With this option enabled you see the notes you must play highlighted on the keyboard with a red background.
+    (The notes selected by the cursor are shown as depressed on the keyboard).
+    </td></tr>
+<tr><td><em>Bluetooth LE</em></td>
+    <td>Opens a dialog window that shows Bluetooth LE MIDI devices (keyboards, sensors).
+    You can <em>pair</em> with one or more of those devices. After paring, the
+    received MIDI messages are processed normally by <em>follow</em>. When the <em>Midi echo</em>
+    checkbox is on, the Bluetooth MIDI messages are also echoed on the normal MIDI output port.
+    </td></tr>
+<tr><td><a name="save"></a><em>Save Preload</em></td>
+    <td>Pops up the save dialog where you can save a preload file. This file contains the score and most of the settings
+    you entered either with the menu or with url parameters. 
+    </td></tr>
+<tr><td><em>Advanced menu</em></td>
+    <td>Shows the advanced menu items (in File menu and Timing menu). The items are shaded with
+    a light blue color. Normally these items are hidden.
+    </td></tr>
+<tr><td><em>Help</em></td>
+    <td>Shows this file.
+    </td></tr>
+</table>
+
+<a name="smenu"></a>
+<h3>The Staff Menu</h3>
+<table class="indent tab">
+<tr><td><em>Extract staff</em></td>
+    <td>When the <em>Single</em> is selected the current staff will be extracted for exclusive display, while all other staves are hidden.
+    The hidden staves still play when needed (in follow mode of the extracted staff or in general play back mode)<br>
+    When <em>Grand</em> is selected the current staff becomes the top staff of a grand staff that is subsequently selected for
+    exclusive display.
+    </td></tr>
+<tr><td><a name="mute"></a><em>Mute own staff</em></td>
+    <td>This option mutes the notes of the selected staff during play back. Normally all staves are played. With this
+    option marked, you hear all other staves but not your own staff (the one you follow/play). You should select this
+    option when your (MIDI) instrument is already producing sound.
+    </td></tr>
+<tr><td><a name="rstmute"></a><em>Mute rest</em></td>
+    <td>This option mutes the notes of all non-selected staves during play back. Use this when you only want to hear
+    your own part (selected staff).
+    </td></tr>
+<tr><td><em>Loop Mode</em></td>
+    <td>Sets (and shows) the loop markers around the current measure. Playback is constrained between
+    the loop markers. A loop marker can be moved by selecting it (click on the marker) and then
+    clicking at the target position.
+    When loop mode is deselected, the loop markers disappear and playback is again unconstrained.
+    </td></tr>
+<tr><td><em>Stop after jump</em></td>
+    <td>This checkbox is only shown when Loop Mode is enabled.
+    <br>When checked, playback (or following)
+    is stopped when the cursor jumps back to the first loop mark.
+    When unchecked, playback (or following) loops interminably.
+    </td></tr>    
+<tr><td><em>Side Scroll</em></td>
+    <td>Displays the score as one long (horizontal) system. The cursor stays in the
+    middle of the window while the score scrolls horizontally.
+    </td></tr>
+<tr><td><a name="pw"></a><em>Page width</em></td>
+    <td>Uses the given width in cm to render the score. It should be larger than 5 and smaller than 50 cm.
+    The original page formatting of the score is erased and an optimal layout is computed for the given page width.
+    Also the (abbreviated) instrument names are erased from all but the first staff to save space.<br>
+    If the real screen/window width is larger than the given number the score will seem enlarged.
+    The page width can also be set to a larger value than in the original score, which results in longer lines with
+    more bars on a line. <br>
+    Entering a number smaller than 5 erases the setting and resets the score to the original page layout.
+    </td></tr>
+<tr><td><em>Hide lyrics</em></td>
+    <td>Hide all lyrics in the score.
+    </td></tr>
+</table>
+
+<a name="tmenu"></a>
+<h3>The Timing Menu</h3>
+<table class="indent tab">
+<tr><td><a name="metmrk"></a><em>Show marks</em></td>
+    <td>Shows permanent marks in the score. These marks are set when the player makes an error, plays
+    a note too late or too early and when a note is held down too short or too long.
+    (timing, duration and error marks). At the end of a performance one can see which errors are made
+    more precisely by checking the advanced menu item
+    <a href = "#ftyp">Error types</a>.
+    </td></tr>
+<tr><td><a name="scal"></a><em>Show score calc.</em></td>
+    <td>Show the score calculation. The following calculation is shown in the menu bar:
+    <em>good_notes - wrong_notes - late_notes - short_notes = score% of total_number_of_notes</em>
+    <br>When the option is unchecked only the score percentage is shown.
+    </td></tr>
+<tr><td><em>Line Cursor</em></td>
+    <td>Shows the line cursor. This cursor moves linearly with (playback) time and is shown in addition
+    to the normal note cursor.
+    </td></tr>
+<tr><td><em>Hide Cursor</em></td>
+    <td>Makes the note cursor invisible.
+    </td></tr>
+<tr><td><a name="timing"></a><em>Check timing</em></td>
+    <td>Enables checking if you play the notes at the right time. An error is raised when you play 
+    a note more than 150 milliseconds too late (or too soon). In addition a second error is raised 
+    when you play a note later than 1000 millisiconds. Each error counts for 0.5 in the score calculation.
+    When an error is raised the offending note is marked in the score.
+    <br>Both threshold values (150 msec and 1000 msec) can be changed with URL parameters lat1=nn&amp;lat2=yy.
+    See also URL parameter <a href="#pnltim">pnltim</a>.
+    </td></tr>
+<tr><td><a name="duration"></a><em>Check duration</em></td>
+    <td>Enables checking if you play notes with the right the duration.
+    A duration error is raised when you play a note 30% longer or shorter than the score duration.
+    In addition the absolute time of the error should be
+    more than 200 milliseconds. This second requirement is to avoid frequent errors in fast notes.
+    When an error is raised the offending note is marked in the score.
+    Both threshold values (30% and 200 msec) can be changed with URL parameters
+    <a href="#kort">kort</a> and <a href="#minkort">minkort</a>.
+    </td></tr>
+<tr><td><em>Show Timing</em></td>
+    <td>This button shows a plot with all timing and duration errors of your performance.
+    </td></tr>
+<tr><td><em>Metronome</em></td>
+    <td>When this option is enabled the metronome continues ticking after the count-in has finished.
+    Otherwise the metronome stops after the count-in. This option is automatically selected when you
+    start the score by clicking on the metronome icon.
+    </td></tr>
+<tr><td><em>No count-in</em></td>
+    <td>Skip the count-in after clicking the start button.
+    </td></tr>
+</table>
+
+<h3>The Advanced Items</h3>
+<table class="indent tab">
+<a name="adv"></a>    
+<tr><td><a name="echo"></a><em>Midi echo</em></td>
+    <td>When playing a midi instrument the notes from the instrument are echoed back on the midi ouput port. This
+    may not be desirable when the instrument already produces sound from itself. In that case the midi echo can
+    be switched off. Notes from the accompaniment are always sent to the output port, unless the option
+    <em>Mute others</em> has been checked.
+    </td></tr>
+<tr><td><em>Test port</em></td>
+    <td>Plays three notes on the synthesizer port for testing the MIDI interface or synthesizer.
+    </td></tr>
+<tr><td><em>Microphone</em></td>
+    <td>The <em>Settings</em> button opens the <a href="#micdlg">microphone dialog</a>.
+    </td></tr>
+<tr><td><em>Keyboard transparency</em></td>
+    <td>This makes the keyboard transparent and it overlays the score. May be useful for small devices.
+    </td></tr>
+<tr><td><a name="ftyp"></a><em>Error types</em></td>
+    <td>When checked the error types are shown next to the permanent marks in the score: numbers
+    appear at the end of a play-through or when the stop button is pressed. The meaning of the numbers is:
+    <ol>
+    <li>= wrong note played</li>
+    <li>= note played too late or too early</li>
+    <li>= 1 + 2</li>
+    <li>= duration of the note played is too short or too long</li>
+    <li>= 1 + 4</li>
+    <li>= 2 + 4</li>
+    <li>= 1 + 2 + 4</li>
+    </ol>
+    </td></tr>
+<tr><td><a name="exact"></a><em>Exact</em></td>
+    <td>With this option checked, the cursor moves at the exact time of the next note(s).
+    It is the same as (and takes precedence over) the previous option, with this difference
+    that playing notes too soon or too late will not change the tempo. The cursor keeps moving in
+    the exact score tempo, and ignores any tempo changes by the player.<br>
+    With the <em>Next note delay</em> option checked, the cursor also moves at the score tempo, 
+    but adjusts the tempo (in adaptive modes) and relocates the current
+    time to the actual played notes (in all modes).<br>
+    This option disables (because overrides) the <em>Next note delay</em> option.
+    When playback mode is chosen, this option is disabled, because playback is always exact.
+    </td></tr>
+<tr><td><em>Next note delay</em></td>
+    <td>After you play the selected notes the cursor moves to the next time position in the score. 
+    When this option is checked (default) the cursor moves at the precise time when the next note
+    has to be played. When unchecked the cursor already moves at half the duration of the present
+    (sounding) note(s). Thus, it arrives at the next note before you have to play it.<br>
+    When you want to play in adaptive mode, this option is better be unchecked. Becaus the cursor
+    arrives sooner at the next note, it allows you to speed up playing, which, in turn, increases
+    the metronome tempo (in adaptive mode).
+    </td></tr>
+<tr><td><em>Play one note before start</em></td>
+    <td>When the count-on is finished the computer starts playing the accompaniment <em>one note before</em> the cursor.
+    So you do not start playing immeriately after the count-in, but the accompaniment does, one note before the selection,
+    where you have to fall in.
+    </td></tr>
+</table>
+
+<h3><a name="micdlg"></a>Microphone dialog</h3>
+<table class="indent tab">
+<tr><td><em>Use Mic.</em></td>
+    <td>Asks permission to use the microphone. When the microphone is working, a pitch detector converts the audio
+    signal into notes, which are followed in the score. Only monophone melodies can be followed.
+    To get access to the microphone the program uses the WebRTC API which is, at the time of writing, only
+    available in Chrome and FireFox on the PC and Android platforms.
+    </td></tr>
+<tr><td><em>Gain</em></td>
+    <td>The gain slider sets the volume level of the microphone. Decibel values of the currently received signal are 
+    shown by the organge volume bar (dB). The target sound should be stronger than the level indicated by the
+    blue line in the volume bar. This level corresponds to the <em>Min. Level</em> slider (see below). The peaks
+    of the current microphone signal are shown in the graph by a <em>grey wave line</em>.
+    </td></tr>
+<tr><td><em>Sensitivity</em></td>
+    <td>The sensitivity slider sets the height of the dashed <em>blue horizontal line</em> in the graph.
+    When the <b>green wave line drops below the dashed blue line a note is recognized</b>.
+    Higher values of the sensitivity result in more (or earlier) recognition of pitches. Values above 5 are
+    not practical, because even without sound notes will be detected (in the background noise).
+    The optimal value is between 1 and 4.<br>
+    The <em>green wave line</em> represents the Average Squared Mean Difference Function
+    (<em>ASMDF</em>) of the microphone signal.
+    This function approaches zero when the input signal is periodical and the x-coordinate equals the period.
+    The x-coordinate of the recognized period is shown with a small <em>red vertical line</em> in the graph.
+    </td></tr>
+<tr><td><em>Min. Level</em></td>
+    <td>The <em>minimum level</em> is a treshhold for the microphone signal. Only signal levels above this threshold
+    are considered for pitch detection. The value should be between -40 dB and 0 dB. The current value of the
+    <em>minimum level</em> is shown in the microphone level bar by a vertical blue line.
+    </td></tr>
+<tr><td><em>Cents bar</em></td>
+    <td>The cents bar displays the deviation of the recognized pitch from the closest musical note. Notes are
+    supposed to have the twelve-tone equal temperament. Your instrument should be well tuned for the pitch
+    detector to produce notes consistent with the score.
+    </td></tr>
+<tr><td><em>Bass guitar</em></td>
+    <td>Normally the lowest note that can be detected is an F#3. When the bass checkbox is marked, the lowest
+    possible note becomes an F#2. However, this doubles the internal sample buffer and makes detection four times
+    slower. Therefore it should only be used when detection of such low notes is really needed.
+    </td></tr>
+</table>
+
+<h3>URL parameters</h3>
+<a name="uparms"></a>
+<p>A link to <em>follow.html</em> can have several URL-parameters, which are explained in the table below. An 
+example of a link with some parameters is:</p>
+<a href="http://wim.vree.org/js/follow.html?d:75mnyv0xsmye3mq/gadma_2.xml&syn&tmp=120&keyb&ksh&play">
+<pre class="indent" style="margin-top:0px;"><!--
+-->http://wim.vree.org/js/follow.html?d:75mnyv0xsmye3mq/gadma_2.xml&amp;syn&amp;tmp=120&amp;keyb&amp;ksh&amp;play</pre>
+</a>
+<p>It plays a MusicXML file from Dropbox on the internal synthesizer and shows the played notes in the score and on the keyboard.</p>
+<table class="indent tab">
+<tr><td><em>score file</em></td>
+    <td>The score file has to be a URL poining to a score file with exension .xml or .abc, for instance:
+    <pre class="indent">http://some.domain.org/follow.html?path/to/score_file.xml</pre>
+    The file can also reside in your dropbox, where it has to be shared publicly. In this case you use the
+    dropbox identifier prefixed with d:<br>For example, dropbox tells me that a shared file in my dropbox has
+    this link:
+    <pre class="indent">https://www.dropbox.com/s/75mnyv0xsmye3mq/gadma_2.xml?dl=0</pre>
+    The relevant part of this link is <em>75mnyv0xsmye3mq/gadma_2.xml</em>, which you use as follows:
+    <a href="http://wim.vree.org/js/follow.html?d:75mnyv0xsmye3mq/gadma_2.xml">
+        <pre class="indent">http://wim.vree.org/js/follow.html?d:75mnyv0xsmye3mq/gadma_2.xml</pre>
+    </a>
+    Note the link is prefixed with <em>d:</em> Try it out by clicking the link.
+    </td></tr>
+<tr><td><em>audio file</em></td>
+    <td>The file name can also be a URL pointing to an audio file (.mp3 or .ogg). You can have both a score file and
+    an audio file. For example:
+    <a href="http://wim.vree.org/js/follow.html?../js3/test/bwv99k.abc&../svgParse/bwv99_msc.mp3">
+        <pre class="indent">http://wim.vree.org/js/follow.html?../js3/test/bwv99k.abc&amp;../svgParse/bwv99_msc.mp3</pre>
+    </a>
+    You can also use the dropbox syntax for the audio file.
+    </td></tr>
+<tr><td><em>preload file</em></td>
+    <td>The third possibility for a file name is a preload file (see <a href="#save">save</a>). For instance:
+    <a href="http://wim.vree.org/js/follow.html?d:0q8p1zvfjn9ijw2/pre_ave.js">
+        <pre class="indent">http://wim.vree.org/js/follow.html?d:0q8p1zvfjn9ijw2/pre_ave.js</pre>
+    </a>
+    You do not need any further URL parameters as all settings are included in the preload file.
+    </td></tr>
+<tr><td><em>stf=</em></td>
+    <td>With the <em>stf=staff_number</em> parameter you specify which staff should be played by you. The notes
+    in this staff are highlighted during your play. The first staff has number 1.
+    </td></tr>
+<tr><td><em>extr</em></td>
+    <td>Sets the <em>Extract staff</em> option to <em>Single</em>. Can be used in combination with <em>stf=</em> to show only
+    a single part from an multi part score.
+    </td></tr>
+<tr><td><em>extrg</em></td>
+    <td>Sets the <em>Extract staff</em> option to <em>Grand</em>. Can be used in combination with <em>stf=</em> to show only
+    a single grand staff from an multi part score. The <em>Check mode</em> remains unchanged. If you want all notes in the
+    grand staff highlighted you have to add the URL option <em>mod=3</em>.
+    </td></tr>
+<tr><td><em>pw=</em></td>
+    <td>The <em>pw=xx</em> parameter sets the page width to <em>xx</em> cm. (see <a href="#pw">Page width</a>)
+    </td></tr>
+<tr><td><em>fmd=</em></td>
+    <td>The <em>fmd=follow_mode</em> chooses one of the four follow modes.
+    The value of <em>follow_mode</em> is 1, 2, 3, 4 or 5. (<a href="#fmd">see menu</a>)
+    </td></tr>
+<tr><td><em>mod=</em></td>
+    <td>With the <em>mod=check_mode</em> parameter you can choose one of the three check modes.
+    The value of <em>check_mode</em> is 1, 2, 3 or 4. (<a href="#cmd">see menu</a>)
+    </td></tr>
+<tr><td><em>tmp=</em></td>
+    <td>The <em>tmp=tempo</em> sets the play back tempo.
+    </td></tr>
+<tr><td><em>nodel</em></td>
+    <td>The <em>Next note delay</em> checkbox is unmarked. After (correctly) playing the highlighted notes the cursor
+    jumps immediately to the next notes, without delay. Normally there is a dealy of half the (played) note length.
+    </td></tr>
+<tr><td><em>metro</em></td>
+    <td>The <em>metro</em> parameter marks the <em>metronome</em> checkbox in the menu, so that the metronome continues
+    when the count-in terminates. Normally the metronome stops ticking after the count-in.
+    </td></tr>
+<tr><td><em>keyb</em></td>
+    <td>When the <em>keyb</em> parameter is present the keyboard will be shown.
+    </td></tr>
+<tr><td><em>ksh</em></td>
+    <td>The <em>ksh</em> parameter marks the <em>show notes</em> checkbox, so that notes highlighed by the cursor
+    are also highlighted on the keyboard.
+    </td></tr>
+<tr><td><em>opa=</em></td>
+    <td>This parameter sets the opacity of the keyboard. <em>opa</em> should be in the range 1-9,
+    where <em>opa=1</em> is opaque and <em>opa=9</em> is maximal transparent.
+    </td></tr>
+<tr><td><a name="nosnd"></a><em>nosnd</em></td>
+    <td>The <em>nosnd</em> parameter disables the internal synthesizer and MIDI output. It is the same as
+    selecting the option &quot;no sound&quot; in the menu (Output port selector)
+    </td></tr>
+<tr><td><a name="noecho"></a><em>noecho</em></td>
+    <td>Do not sent the MIDI messages of the keyboard to the output port (default: internal synthesizer).
+    This option is needed when the keyboard already produces sound of its own.
+    </td></tr>
+<tr><td><em>nocnt</em></td>
+    <td>Do not show and play the count-in before play back is started (start button pressed, central C played
+    or metronome icon clicked)
+    </td></tr>
+<tr><td><em>nomenu</em></td>
+    <td>Hides the menu.
+    </td></tr>
+<tr><td><em>nobar</em></td>
+    <td>Hides complete menu bar at the top of the window, but not the menu button (see above for hiding that too)
+    </td></tr>
+<tr><td><em>nocur</em></td>
+    <td>Hides the cursor.
+    </td></tr>
+<tr><td><em>line=</em></td>
+    <td>Sets the position of the dotted line. <em>line=1</em> is at the top and <em>line=100</em> is at the bottom
+    of the page.
+    </td></tr>
+<tr><td><em>ip</em></td>
+    <td>When this parameter is present the device tries to connect to a Web Socket server at port 8091. The ip address
+    of this server is taken from the host part of the URL. The required socket server and a web server at port 8090
+    are both started when you run the program abcSrv.js with nodejs.<br>
+    When connecion is successful the menu button becomes green. Positioning of the cursor is now
+    syncrhonized with a master device (see parameter <em>ipm</em>).
+    </td></tr>
+<tr><td><em>ipm</em></td>
+    <td>When present this parameter makes the device the master of a group after connecting to a Web Socket server
+    at port 8091. When connecion is successful the menu button becomes red. The master sends its cursor
+    position (when it changes) to all slaves. The slaves synchronize their cursor movement to the master.
+    </td></tr>
+<tr><td><em>hrz=</em></td>
+    <td>Switches to horizontal scrolling (side scroll mode) when <em>hrz</em> &gt; 0. The default value is 50 and
+    it determines the ac(de)celeration of the side scrolling speed. For fast moving scores a higher value (200)
+    may be better.
+    </td></tr>
+<tr><td><em>scl=</em></td>
+    <td>Sets the scale of the score when in side scroll mode (0 &lt; scale &lt; 2.0)
+    </td></tr>
+<tr><td><em>shrnk=</em></td>
+    <td>Sets the note spacing when in side scroll mode. Note spacing is maximal when <em>shrnk</em> = 0.
+    Higher values make the score shrink (it is the ABC %%maxshrink parameter)
+    </td></tr>
+<tr><td><em>vol=</em></td>
+    <td>Sets the volume of the internal synthesizer (slider in the timing bar).
+    </td></tr>
+<tr><td><em>pnlerr=</em></td>
+    <td>Sets the penalty factor for wrong notes in the score calculation (between 0 and 1, default 0.5).
+    </td></tr>
+<tr><td><a name="pnltim"></a><em>pnltim=</em></td>
+    <td>Sets the penalty factor for late (or early) notes in the score calculation (between 0 and 1, default 0,5).
+    A note is considered too late if it is played more than LATE1 milliseconds too late (or too early).
+    If played more than LATE2 milliseconds too late the penalty becomes 2. The default values are
+    LATE1=150 and LATE2=1000, and can be set with URL parameters lat1=nn&amp;lat2=yy.
+    (see <a href="#timing">Check timing</a>)
+    </td></tr>
+<tr><td><em>pnlkrt=</em></td>
+    <td>Sets the penalty factor for notes that are played with incorrect duration, i.e. are held down
+    not long enough or too long. (default value is 0.5)
+    </td></tr>
+<tr><td><a name="kort"></a><em>kort=</em></td>
+    <td>Sets the margin above which a duration error is raised. The value is a
+    percentage (default 30) of the note duration. A smaller margin will require more accurate playing.
+    (see <a href="#duration">Check duration</a>)
+    </td></tr>
+<tr><td><a name="minkort"></a><em>minkort=</em></td>
+    <td>Sets a minimum absolute duration error. Smaller errors will be ignored. Default 200 milliseconds.
+    This threshold avoids frequent errors in fast notes. (see <a href="#duration">Check duration</a>).
+    </td></tr>
+<tr><td><a name="urlmute"></a><em>mute</em></td>
+    <td>Enables (marks) the &quot;<a href="#mute">Mute own staff</a>&quot; option in the menu.
+    </td></tr>
+<tr><td><a name="urlrstmute"></a><em>rstmute</em></td>
+    <td>Enables (marks) the &quot;<a href="#rstmute">Mute rest</a>&quot; option in the menu.
+    </td></tr>
+<tr><td><em>nosm</em></td>
+    <td>Disable smooth scrolling.
+    </td></tr>
+<tr><td><em>ctrls</em></td>
+    <td>Show the controls of the audio player. Normally the audio player is hidden. Only works when an audio
+    file is present.
+    </td></tr>
+<tr><td><em>scal</em></td>
+    <td>Show the score calulation in the menu bar.
+    (see  <a href="#scal">Show score calc</a>)
+    </td></tr>
+<tr><td><em>tmng</em></td>
+    <td>Also include (and show) the timing penalty in the score calulation. Without this option no timing
+    penalty is subtracted from the score.
+    </td></tr>
+<tr><td><em>tmng2</em></td>
+    <td>Enable checking of note durations. Notes played with incorrect duration will be marked in the
+    music and a penalty value (see option pnlkrt) will be subtracted from the score.
+    </td></tr>
+<tr><td><em>lncur</em></td>
+    <td>Show a line cursor at the current real time. In addition to the normal note cursor this line cursor
+    shows playback time continuously, linearly moving from note to note.
+    </td></tr>
+<tr><td><em>oneclr</em></td>
+    <td>Only use the blue color for the line cursor (one color). Without this option the line cusor receives
+    the same color as the note cursor (i.e. green if you play the right note, red if you play the wrong note).
+    </td></tr>
+<tr><td><em>stopat=</em></td>
+    <td>Specifies a midi number (key) that will function as start/stop button. Pressing this key has
+    the same effect as clicking the start/stop button in the menu bar. Usually a very low key number is used (24).
+    </td></tr>
+<tr><td><em>hinfo=</em></td>
+    <td>Sets the (initial) height of the menu bar (default 36 pixels)
+    </td></tr>
+<tr><td><em>mat=</em></td>
+    <td>Specifies the opacity (matheid) of all cursors (default 0.5).
+    </td></tr>
+<tr><td><em>kleur=</em></td>
+    <td>Specifies a color for each voice cursor by a comma separated list of RGB hex values.
+    Default: kleur=#f9f,#3cf,#c99,#f66,#fc0,#cc0,#ccc<br>
+    The line cursor takes the color of the first voice. If there are more voices than colors this list repeats.
+    </td></tr>
+<tr><td><em>nolyr</em></td>
+    <td>Hide all lyrics in the score.
+    </td></tr>
+<tr><td><em>hide2cur</em></td>
+    <td>The line cursor gets the visibility of the note cursor. (i.e. is also hidden when nocur is given).
+    </td></tr>
+<tr><td><em>tmo=</em></td>
+    <td>Sets the timeout in milliseconds for the audio, when the cursor is waiting for the user to play
+    the next note. The default value is 200 msec, which means that the audio will stop if the user
+    fails to play a note within 200 milliseconds after the note is highlighted by the cursor.
+    </td></tr>
+<tr><td><em>metmrk</em></td>
+    <td>Shows all permanent marks in the score. (timing, duration and error marks) See also
+    <a href = "#metmrk">Show marks</a> and
+    <a href = "#ftyp">Error types</a>.
+    </td></tr>
+<tr><td><em>ftyp</em></td>
+    <td>Shows all error numbers next to the permanent marks at the end of a play through or when the
+    stop button is pressed. The numbers are explained in 
+    <a href = "#ftyp">Error types</a>.
+    </td></tr>
+</table>
+
+<h3><a name="midi"></a>MIDI flow</h3>
+<table class="indent tab">
+<tr><td>
+<pre style="font-size: large; padding-left: 2em;">
+selected staff --- <em style="background:#00ffff80">Player</em> ----- <b>mute</b> ---+             +--- no sound
+            (playback mode)             |             |
+                                        |             |
+other staves --- <em style="background:#00ffff80">Player</em> ---- <b>rstmute</b> ---+-- <b>portsel</b> --+--- internal synthesizer
+            (constant mode)             |             |
+            (playback mode)             |             |
+                                        |             |
+<em style="background:#80ff8080">Keyboard</em> (MIDI in) --------+--- <b>echo</b> ---+             +--- external synthesizer (MIDI out)
+(or on-screen keys)        |
+(or simulated play)        |
+                           +--- Timing checks 
+                              &amp; cursor colors
+</pre>
+</td></tr>
+<tr><td style=" padding-left: 0.5em;">
+The <em style="background:#00ffff80">Player</em> is the part of <em>Follow</em> that translates notes in
+the score to MIDI events. These events are generated in real time and send to the output device so that
+you can hear them. The output device is selected (designated) by option <b>portsel</b>.
+With this option you can choose between the internal
+synthesizer or an external synthesizer which should be connected to the MIDI output port. Or you can
+just discard all events, so you have no sound from the player (but you can still have sound
+from an audio file).
+<br>The <em style="background:#80ff8080">keyboard</em> can be a real keyboard connected to MIDI input,
+or the on-screen keyboard. The MIDI events
+of the keyboard are always processed by the timing checks of <em>Follow</em> to color the cursor
+and count the errors. Normally keyboard events are passed on to the port selector and from there
+to the synthesizer, so that you can hear what you are playing. But the events can be blocked
+by setting option <b>echo</b> to false. This may be desirable when the instrument already
+produces its own sound.
+<br>The MIDI events from the <em style="background:#00ffff80">Player</em> can also be inhibited by option <b>mute</b> 
+and <b>rstmute</b>. The first one blocks the events from the selected staff, i.e. the staff
+that you are supposed to play. The second one blocks the events from all other staves. These
+are supposed to be your accompaniment, but you might not want to hear them.
+</td></tr>
+<tr><td>
+<table class="indent"><tr>
+    <th><em>Menu item</em></th>
+    <th><em>Preload option</em></th>
+    <th><em>Default value</em></th>
+    <th>related<br><em>URL parameter</em></th>
+</tr><tr>
+    <td><a href="#echo">Midi echo</a></td>
+    <td><b>echo</b></td>
+    <td>true</td>
+    <td><a href="#noecho">noecho</a></td>
+</tr><tr>
+    <td><a href="#mute">Mute own&nbsp;staff</a></td>
+    <td><b>mute</b></td>
+    <td>false</td>
+    <td><a href="#urlmute">mute</a></td>
+</tr><tr>
+    <td><a href="#rstmute">Mute others</a></td>
+    <td><b>rstmute</b></td>
+    <td>false</td>
+    <td><a href="#urlrstmute">rstmute</a></td>
+</tr><tr>
+    <td><a href="#oport">Sythesizer</a></td>
+    <td><b>portsel</b></td>
+    <td>internal synthesizer</td>
+    <td><a href="#nosnd">nosnd</a></td>
+</tr>
+</table>
+<p class="indent"><em>Correspondence between options, menu items and related URL parameters</em></p>
+</td></tr>
+</table>
+
+<h3><a name="server"></a>Synchronizing multiple devices</h3>
+<p>Multiple devices can follow the same score in precise synchronization. Each device can focus (extract) a different part of
+the score. In such a group of devices there is one master who determines the tempo, either by just using the play back feature or
+by actually playing on a midi device. The other devices are slaves and just follow the master.
+To achieve synchronization <em>Follow</em> uses a special server program called <em>AbcSrv.js</em>.</p>
+<p><em>AbcSrv.js</em> is included in the distribution zip file. It is a javascript program
+that implements a simple http server and a special Web Socket server. The normal http server runs on port 8090 and the web socket server
+on port 8091.
+<br> To run <em>abcSrv.js</em> you need to have <a href="http://nodejs.org/"><em>Node</em></a> installed. <em>Node</em> is a javascript
+engine with unrestricted access to the computer's (networking) capabilities.
+<br>When you have <em>Node</em> installed you can start abcSrv.js in a terminal window (command line prompt) with:
+<pre class="indent">
+# nodejs abcSrv.js
+</pre>
+The command for <em>Node</em> (nodejs in the example) may be different on your platform (for instance, just node).
+When started <em>abcSrv.js</em> prints the following output in the terminal window:
+<pre class="indent">
+websocket server listening on port: 8091, address: 192.168.xx.xx
+http server listening in port: 8090, adress: 192.168.xx.xx
+web server root directory: /path/to/where/abcSrv.js/is/located/
+</pre>
+</p><p>
+Now you can check that the server works by just typing 192.168.xx.xx:8090 in a browser on another device connected to the same (WIFI) network.
+It should display a listing of files, one of which is <em>follow.html</em>.
+Then you can open <em>follow.html</em> as slave or as master, using:
+<pre class="indent">
+http://192.168.xx.xx:8090/follow.html?some_preload.js&ip   (for all slave devices)
+http://192.168.xx.xx:8090/follow.html?some_preload.js&ipm (for the master device)
+</pre>
+</p><p>In stead of a preload file, as in the example above, you can also just use a score file, or even no file at all and open
+a score file later with the menu button.
+</p><p>
+When a device succesfully connects to abcSrv.js the menu button becomes green. For the master device the
+menu button becomes red. This gives some feedback to indicate that all is workiing well and that henceforth all 
+play/pause/jump actions will be issued by the master of the group. The slave devices cannot initiate any actions, they
+only follow the master.
+</p><p>
+You should have all files of the distribution (including abcSrv.js) extracted to one directory, which becomes the server root directory.
+All preload files you make or score files you want to use should also be in this directory.
+</p>
+On a normal (i.e. not jailbroken) iPad, <em>abcSrv.js</em> has been tested using the app <em>Touch Code Pro</em> from iTunes. This app can load
+and run <em>abcSrv.js</em>, turning the iPad into a simple http server and websocket server. While <em>Touch Code Pro</em> is running you can
+still use the browser to also open <em>Follow</em>, so you do not loose a device.
+</body></html>

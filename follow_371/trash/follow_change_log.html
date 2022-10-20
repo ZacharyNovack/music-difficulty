@@ -1,0 +1,142 @@
+<!DOCTYPE HTML><html><head><meta charset="utf-8"></head>
+<body><pre>2022-07-08
+
+	* Revision: 371
+	- (microphone) convert detected pitches to MIDI messages. Previously pitches
+	were only checked directly (checkMidi).
+	- (microphone) only generate a new note-on message when the previous note has
+	been completed with a note-off message. Previously, multiple note-on
+	messages could occur during decay (mostly false octaves)
+
+2022-06-14
+
+	* Revision: 370
+	- new option "echo" corresponding to the menu checkbox "MIDI echo"
+	- new URL parameter "noecho" to set option echo:false
+
+2022-06-13
+
+	* Revision: 369
+	- always record skipped notes in playback mode so that they also show up
+	when option "show marks" is checked at the end of a performance. Previously
+	recording skipped notes was only done while "show marks" was enabled.
+
+	* Revision: 368
+	- do not mute simulated playing (space bar or right arrow key) when option
+	"mute own staff" is checked. Only mute playback of the "own" staff.
+
+2022-06-12
+
+	* Revision: 367
+	- indentation bug in function zend(): MIDI messages would never be sent to
+	the MIDI output port. Now they will, when an external MIDI interface has
+	been selected.
+	- do not mute the keyboard (on-screen or MIDI) when option "mute own staff" is
+	checked. Only mute playback of the "own" staff.
+
+2022-06-10
+
+	* Revision: 366
+	- bug: always show errors in score calculation when opt.scal is true (also
+	when opt.tmng and opt tmng2 are false)
+
+	* Revision: 365
+	- remove option nocalc.
+	- add option scal, meaning: Show score calculation
+	- change the boolean expressions with scal accordingly
+	- update the readme
+
+	* Revision: 364
+	- add checkbox "Hide score calc." to the timing menu
+	- add corresponding (URL) option "nocalc" and remove option "scal"
+	- update the readme accordingly
+
+2022-06-08
+
+	* Revision: 363
+	- allow too early played notes during the last count down
+	- bug in duration check sometimes caused marking the next note
+
+2022-06-04
+
+	* Revision: 362
+	- new checkbox in timing menu to disable the count-in (option nocnt)
+	- the escape key hides the menu if any is visible
+
+2022-06-03
+
+	* Revision: 360
+	- three menus
+	- show/hide advanced menu items
+
+2022-05-29
+
+	* Revision: 359
+	- do not mark rests with error type 4 (too long)
+
+2022-05-27
+
+	* Revision: 358
+	- new advanced menu item: Error types. When checked displays error codes
+	next to the permanent marks in the score.
+	- new corresponding (URL) option: ftyp (default off)
+	- store error types while playing for display when stopped (with new menu
+	item)
+	- also use stored error type for redrawing notes held down much too long
+	- new functions toonFoutTypes and veegFoutTypes for displaying and removing
+	error types
+
+	* Revision: 357
+	- one permanent mark per note/chord with a unique color for each combination
+	of errors made.
+	- bug: remove opacity setting from putMarkLoc.
+	- new option: ntKleur is an array of 7 error colors, one for each combination
+	of error types.
+	- bug: also draw permanent marks on the last note.
+	- draw error marks when cursor moves to next note for all error types
+	- redraw duration error mark for notes that are held down much long
+
+2022-05-24
+
+	* Revision: 356
+	- remove the normal cursor as soon as a permanent mark is set
+	- bug: guard marking of skipped notes with opt.metmrk
+
+	* Revision: 355
+	- the line cursor continues during the last note (previously it stopped)
+	- new menu checkbox and URL option (metmrk) to show/hide all permanent marks
+	- close button in timing graph
+	- escape key closes menu or timing graph
+	- rename menu button "showStats" to "Show Timing Graph"
+
+2022-05-19
+
+	* Revision: 354
+	- permanent marks for errors are placed when cursor moves to the next note
+	- To avoid double markings, store permanent marks in a dictionary with a key
+	that is determined by score position, voice number and color.
+	- draw permanent error marks when the cursor moves to the next note
+	- bug: array ref out of bounds in tekenLoper
+
+2022-05-18
+
+	* Revision: 352
+	- hide/show markings with the "hide cursor" checkbox and nocur option.
+	- check timing errors only once per voice
+
+2022-05-17
+
+	* Revision: 351
+	- for a group of simultaneous notes check timing for every note, not only
+	for the last (latest) one.
+	- add URL parameters: pnlkrt, kort, minkort (see readme)
+
+2022-05-14
+
+	* Revision: 350
+	- call showScore in initScore to make sure the score percentage is always
+	shown
+	- make the color of the total score element depend on actual score percentage
+	- the total score element is always the same independent of the score options
+
+</pre></body></html>

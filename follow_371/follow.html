@@ -1,0 +1,439 @@
+<!DOCTYPE HTML>
+<html class="rat"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="full_source/jquery-1.11.1.min.js"></script>
+<script src="full_source/jquery.flot.min.js"></script>
+<script src="full_source/abc2svg-1.js"></script>
+<script src="full_source/xml2abc.js"></script>
+<script src="full_source/acoustic_grand_piano-mp3.js"></script>
+<script src="full_source/follow.js"></script>
+<style>
+.rat { width: 100%; height:100%; margin:0px; overflow: auto; }
+body { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; -webkit-touch-callout: none; }
+html, body { background: white; }   /* for full screen */
+label, input, select { font-family: arial; font-size: 15px; }
+#btns     { position: absolute; right: 0px; z-index:3; max-height: 100%; max-width: 100%; overflow: auto; }
+.down { background-color: #aaa }
+.mnbar { text-align: right; background-color: #eee; font-family: arial; font-size: 15px; }
+.mknop { padding: 5px 15px 5px 15px; display: inline-block; }
+.ext   { background: #00f0f040}
+#menu     { background-color: #eee; padding: 0.5em; min-width: 20em;}
+#menu label { display:block; margin-bottom: 8px; }
+#menu label.rflt { float: right; margin-bottom: 0px; }
+#menu label > span { display: inline-block; width: 8em; }
+#info     { height:  5%; background-color: #eee; }
+#info > span { width: 2em; display: inline-block; text-align: right; padding-right:3px; }
+#error { display: inline; }
+#kwart    { padding-left:4px; padding-right:4px; }
+#mtrsvg, #aud, #vol, #spkron, #spkrof { vertical-align: middle; }
+#tempo    { width: 3em; }
+#vol      { width: 100px; }
+#notation { height: 90%; display: inline-block; vertical-align: top; width: 10px; min-width: 100%; }
+#err      { height:  5%; background-color: #eee; white-space: pre-wrap; word-break: break-all;
+            -webkit-user-select: text; }
+#countin  { width:1em; font-size:10em; z-index:2; color:green; background:none; }
+#perf     { width: 100%; height: 100%; padding: 0px; }
+#perfbtn  { font-size:large; position: absolute; left: 20px; bottom: 20px; }
+#flot     { height: 90%; }
+#keyb     { position: absolute; bottom: 0px; height: 30%; width: 100%; overflow: hidden; display: none; }
+#toetsen  { height: 100%; white-space: nowrap; }
+#toetsen text { pointer-events: none; }
+#zoom     { position: absolute; bottom: 30%; width: 100%; height: 50px; z-index:2; display: none }
+#kblft    { position: absolute; left: 5px; bottom: 30%; width: 30px; z-index:2; display: none }
+#kbrgt    { position: absolute; right:5px; bottom: 30%; width: 30px; z-index:2; display: none }
+#keybdata { display: none }
+#rollijn  { position:absolute; height:30px; width:100%; z-index:1; top: 30%; }
+#kbopa    { width: 2em; }
+#pw, #mtpo, #scl, #kbopa    { width: 2.5em; }
+#atag, #btag { stroke-width: 2px; stroke: grey; fill: grey; pointer-events: bounding-box; }
+.tagselect { stroke: black !important; fill: black !important; }
+#demoDlg  { width: 80%; }
+#demoDlg li { margin-bottom: 5px; }
+#saveDlg  { width:80%; height:80%; z-index:9; border: medium black ridge; box-shadow: 10px 10px 5px #888888; }
+#saveDlg #div1 { height:2%; }
+#saveDlg #div2 { height:90%; width:99%; overflow: scroll; background: white; display:inline-block; vertical-align: bottom; }
+#saveDlg #div4 { height:90%; width:1%; display:inline-block; vertical-align: bottom; }
+#saveDlg #div3 { height:6%; overflow: hidden; }
+#saveDlg pre { margin:0px; -webkit-user-select: text; }
+#saveDlg button { margin-left:1em; }
+.dashed   { border-bottom: thin dashed black; }
+.abcref { fill-opacity: 0.1; }
+.dlog { display:none; background:lightblue; position:absolute; top: 50%; left: 50%;
+        width:30%; padding:10px; transform: translate(-50%,-50%); z-index:9; }
+.neer { fill: #ff0000 !important; }
+.spel { background: rgba(0,255,0,0.3) !important;}
+.alsknop { display: inline-block; padding: 2px 8px; background: ButtonFace; color: ButtonText; border-style: solid;
+           border-width: 2px; border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight; }
+.alsknop:active { border-color: ButtonShadow ButtonHighlight ButtonHighlight ButtonShadow; }
+.score  { width: auto; padding-right: 0px; }
+/******** microfoon dialoog **********/
+#tuner    { width: 95%; max-width: 800px; }
+#tuner table { width: 100%; }
+#tuner td { white-space: nowrap; }
+input[type=range] { width: 100%; margin: 0px; }
+#mxlvl, #cents, #anatijd { width: 100%; background-color: #bbb; padding: 2px; display: inline-block;}
+#mxlvl > div   { background: orange; }
+#cents > div   { display: inline-block; background: #0cc; }
+#cents > span  { display: inline-block; }
+#anatijd > div { background: #ccc; }
+#graaf    { border: #aaa solid 1px; }
+#micOk    { float: right; padding-left: 10px; padding-right: 10px; }
+#levmrk   { position: absolute; border-right: blue solid 2px; width: 30%; width: 50px; padding-top:2px; padding-bottom:2px;}
+#noot     { font-size: large; font-weight: bold; }
+.lpad     { padding-left: 5px; }
+.rtxt     { text-align: right; }
+#info #micon   { color: #666; width: auto; }
+@media (hover: hover) {
+    #mbar:hover { cursor: pointer; }
+    .mknop:hover { cursor: pointer; background: #aaa; }
+    #menu label:hover { cursor: pointer; background: #ccc; }
+    #kwart:hover, #spkr:hover { cursor: pointer; }
+    #err:hover { height:  50%; position:absolute; top:50%; }
+    #zoom:hover { cursor: grab; background: rgba(0,255,0,0.3); }
+    #kblft:hover { cursor: pointer; }
+    #kbrgt:hover { cursor: pointer; }
+    #rollijn:hover { cursor: row-resize; background: rgba(0,255,0,0.3); }
+    #micon:hover   { cursor: pointer; }
+}
+</style>
+
+</head><body class="rat">
+<div id="btns">
+    <div class="mnbar">
+        <div class="mknop" id="mbar" tabindex="1">File</div>
+        <div class="mknop" id="mbar2" tabindex="2">Staff</div>
+        <div class="mknop" id="mbar3" tabindex="3">Timing</div>
+    </div>
+    <form id="menu">
+    <div id="hfd">
+        <div>
+            <label id="flbl"><span>Score file:</span><input type="file" id="fknp" accept=".abc,.xml,.mxl,.js,.ogg,.mp3" tabindex="1"></label>
+            <label class="rflt"><span>Full Screen</span><input id="fscr" type="checkbox"/></label>
+            <label id="drplbl"><span>Use dropbox:</span><input id="drpuse" type="checkbox"></label>
+            <label id="l1"><span>Check mode:</span><select id="chkmod">
+                <option value="1">Top notes of selected staff</option> 
+                <option value="2">All notes of selected staff</option> 
+                <option value="3">All notes of grand staff</option> 
+                <option value="4">All notes of all staves</option>
+                </select></label>
+            <label id="l0"><span>Follow mode:</span><select id="volgmod">
+                <option value="6">Playback</option>
+                <option value="7">Constant tempo</option><!--
+                <option value="1">Adaptive tempo</option>
+                <option value="2">Constant tempo</option> 
+                <option value="3">Constant tempo with life bar</option>
+                <option value="4">Adaptive (with timeout)</option>-->
+                <option value="5">Adaptive</option>
+                </select></label>
+            <label id="mtplab"><span>Min. tempo:</span><input type="number" id="mtpo" min="1" max="200"> bpm.</label>
+            <label id="l2"><span>Synthesizer: </span><select id="portsel">
+                <option value="nosound">No sound</option> 
+                <option value="synth">Internal synth</option> 
+                </select></label>
+            <label class="ext"><span>Midi echo:</span><input type="checkbox" id="echo" checked="true"></label>
+            <label class="ext"><span>Test port:</span><input type="button" id="testport" value="Test port"></label>
+            <label class="ext"><span>Microphone:</span><input type="button" id="micKnop" value="Settings"></label>
+            <label id="marklbl" class="rflt"><span>Show notes:</span><select id="mark">
+                <option value="0">Off</option> 
+                <option value="1">C</option> 
+                <option value="2">Do</option> 
+                </select></label>
+            <label id="lB"><span>Keyboard:</span><input type="checkbox" id="keys"></label>
+            <label class="ext" id="kbopalbl"><span>Keyboard transparency:</span><input type="number" id="kbopa" min="0" max="9"> (0-9)</label>
+            <label class="rflt"><span>Save Preload:</span><input type="button" id="save" value="Save"></label>
+            <label id="lD"><span>Bluetooth LE</span><input id="ble" type="button" value="Pair"/></label>
+            <label id="lE"><span>Advanced menu:</span><input type="checkbox" id="advanced"></label>
+            <label class="rflt" id="verlab"></label>
+            <label><a href="follow_readme.html" target="_blank">ReadMe</a></label>
+        </div>
+        <div>
+            <label id="lC"><span>Extract staff:</span><select id="extract">
+                <option value="1">Off</option> 
+                <option value="2">Single</option> 
+                <option value="3">Grand</option> 
+                </select></label>
+            <label id="lA" class="rflt"><span>Mute others:</span><input type="checkbox" id="rstmute"></label>
+            <label id="l9"><span>Mute own staff:</span><input type="checkbox" id="mute"></label>
+            <label id="stoplbl" class="rflt"><span>Stop after jump:</span><input type="checkbox" id="lusstop"></label>        
+            <label id="l5"><span>Loop Mode:</span><input type="checkbox" id="lus"></label>
+            <label id="l8" class="rflt"><span>Hide lyrics:</span><input type="checkbox" id="nolyr" checked="false"></label>
+            <label id="l6"><span>Side Scroll:</span><input type="checkbox" id="hrz"></label>
+            <label id="pwlbl"><span>Page width: </span><input type="number" id="pw" min="5"></label>
+            <label id="scllbl"><span>Scale: </span><input type="number" id="scl" step="0.1" min="0.1" max="2.0"></label>
+        </div>
+        <div>
+            <label id="lK" class="rflt"><span>Show score calc.</span><input id="scal" type="checkbox"/></label>
+            <label id="lI"><span>Show marks</span><input id="metmrk" type="checkbox"/></label>
+            <label class="ext"><span>Error types:</span><input type="checkbox" id="ftyp"></label>
+            <label id="l4" class="rflt"><span>Hide cursor</span><input id="nocur" type="checkbox"/></label>
+            <label id="l3"><span>Line cursor:</span><input type="checkbox" id="lncur"></label>
+            <label id="lG" class="rflt"><span>Check duration:</span><input type="checkbox" id="tmng2"></label>
+            <label id="lH"><span>Check timing:</span><input type="checkbox" id="tmng"></label>
+            <label id="lF"><span>Timing Graph</span><input type="button" id="stats" value="Show"></label>
+            <label id="lJ" class="rflt"><span>No count-in:</span><input type="checkbox" id="nocnt"></label>
+            <label id="l7"><span>Metronome:</span><input type="checkbox" id="metro"></label>
+            <label class="ext"><span>Exact:</span><input type="checkbox" id="exact" checked="false"></label>
+            <label class="ext"><span>Next note delay:</span><input type="checkbox" id="delay" checked="true"></label>
+            <label class="ext"><span>Play one note before start:</span><input type='checkbox' id="eenvoor"></label>        
+        </div>
+    </div>
+    </form>
+</div>
+<div class="rat" id="info">
+    <label id="kwart"></label><input type="number" min="20" max="300" id="tempo">
+    <input type='button' id="start" value="Start">
+    <span id="micon">&#9673;</span>
+    <input id="vol" type="range" min="0" max="100" value="80">
+    <span id="spkr"></span>
+    <audio id="aud" src="#"></audio>
+    <div id="error">
+        <span><span id="sgd" class="score"></span><!--
+        --><span class="score">-<span id="se1" class="score"></span></span><!--
+        --><span class="score">-<span id="se2" class="score"></span></span><!--
+        --><span class="score">-<span id="se3" class="score"></span></span><!--
+        --><span class="score">=</span></span><span id="pct" class="score"></span>%<!--
+        --><span> of <span id="stot" class="score"></span></span>
+    </div>
+    <span id="deb" style="white-space:nowrap"></span>
+</div>
+<div class="rat" id="notation"></div>
+<pre class="rat" id="err"></pre>
+<div id="rollijn" class="dashed" title="drag to reposition the focussed staff"></div>
+<div id="zoom" title="horizontal drag shifts keys, vertical drag resizes"></div>
+<div id="countin" class="dlog"></div>
+<pre id="wait" class="dlog">Loading, please wait ...</pre>
+<div id="result" class="dlog">bla bla bla 123</div>
+<div id="perf" class="dlog">
+    <div id="flot"></div>
+    <button id="perfbtn">Close</button>
+</div>
+<div id="comp" class="dlog">wait until all notes are computed (midi numbers 24 - 108) ... </div>
+<div id="unlkDlg" class="dlog">Loading audio, please wait ...</div>
+<div id="demoDlg" class="dlog"><span></span><button>Ok</button></div>
+<div id="saveDlg" class="dlog">
+    <div id="div1"></div>
+    <div id="div4"></div><!--no space between inline-block elements! because it is rendered!!!
+ --><div id="div2"><pre></pre></div>
+    <div id="div1"></div>
+    <div id="div3">
+        <button id="saveok">Close</button> <a href="#" download="preload.js" class="alsknop">Save Preload as File</a>
+    </div>
+</div>
+<div id="tuner" class="dlog">
+    <table><colgroup>
+        <col>
+        <col style="width: 30%;">
+        <col style="width: 5%;">
+        <col style="width: 30%;">
+        <col style="width: 4%;">
+        <col style="width: 12%;">
+    </colgroup>
+    <tr>
+        <td colspan="6"><canvas id="graaf" width="512" height="256"></canvas></td>
+    </tr><tr>
+        <td class="rtxt"><label><input id="micuse" type="checkbox"> Use Mic.</label></td>
+        <td><div id='levmrk'>&nbsp;</div><div id="mxlvl"><div></div></div></td>
+        <td class="lpad">dB</td>
+        <td><input type="range" id="gain" value="5.0" min="1" step="0.1" max="10"></td>
+        <td><span id="gval"></span></td>
+        <td>gain</td>
+    </tr><tr>
+        <td class="rtxt"><span id="noot">C0</span></td>
+        <td><div id="cents"><span></span><div></div></div></td>
+        <td class="lpad">cent</td>
+        <td><input type="range" id="drempel" value="1.0" min="1" step="0.1" max="10"></td>
+        <td><span id="dval"></span></td>
+        <td>sensitivity</td>
+    </tr><tr>
+        <td class="rtxt">Analysis time</td>
+        <td><div id="anatijd"><div></div></div></td>
+        <td class="lpad">msec</td>
+        <td><input type="range" id="minlev" value="-18" min="-40" step="1" max="0"></td>
+        <td><span id="mval"></span></td>
+        <td>min.level</td>
+    </tr><tr>
+        <td class="rtxt">(lowest F#2)</td>
+        <td><label><input type="checkbox" id="bass"> Bass guitar</label></td>
+        <td></td>
+        <td><a href="follow_readme.html#micdlg" target="_blank">Help</a></td>
+        <td></td>
+        <td><input type="button" id="micOk" value="OK"></td>
+    </tr></table>
+</div>
+<div id="keyb">
+    <div id="toetsen"></div>
+</div>
+<div id="keybdata">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="octaaf" viewBox="0 0 161 121" height="100%" preserveAspectRatio="none">
+    <g
+       id="g3723">
+      <rect
+         id="ttsW1"
+         height="120"
+         width="23"
+         y="0"
+         x="0"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW2"
+         height="120"
+         width="23"
+         y="0"
+         x="23"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW3"
+         height="120"
+         width="23"
+         y="0"
+         x="46"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW4"
+         height="120"
+         width="23"
+         y="0"
+         x="69"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW5"
+         height="120"
+         width="23"
+         y="0"
+         x="92"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW6"
+         height="120"
+         width="23"
+         y="0"
+         x="115"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsW7"
+         height="120"
+         width="23"
+         y="0"
+         x="138"
+         style="fill:#ffffff;stroke:#000000" />
+      <rect
+         id="ttsZ1"
+         height="64"
+         width="13"
+         y="0"
+         x="14"
+         style="fill:#000000;stroke:#000000;stroke-width:0.89550751" />
+      <rect
+         id="ttsZ2"
+         height="64"
+         width="13"
+         y="0"
+         x="41"
+         style="fill:#000000;stroke:#000000;stroke-width:0.89550751" />
+      <rect
+         id="ttsZ3"
+         height="64"
+         width="13"
+         y="0"
+         x="83"
+         style="fill:#000000;stroke:#000000;stroke-width:0.89550751" />
+      <rect
+         id="ttsZ4"
+         height="64"
+         width="13"
+         y="0"
+         x="109"
+         style="fill:#000000;stroke:#000000;stroke-width:0.89550751" />
+      <rect
+         id="ttsZ5"
+         height="64"
+         width="13"
+         y="0"
+         x="134"
+         style="fill:#000000;stroke:#000000;stroke-width:0.89550751" />
+      <text id="txtW1" x="5" y="90"></text>
+      <text id="txtW2" x="28" y="90"></text>
+      <text id="txtW3" x="51" y="90"></text>
+      <text id="txtW4" x="74" y="90"></text>
+      <text id="txtW5" x="97" y="90"></text>
+      <text id="txtW6" x="120" y="90"></text>
+      <text id="txtW7" x="143" y="90"></text>
+      <text id="txtZ1" x="14" y="40" style="font-size:80%"></text>
+      <text id="txtZ2" x="41" y="40" style="font-size:80%"></text>
+      <text id="txtZ3" x="83" y="40" style="font-size:80%"></text>
+      <text id="txtZ4" x="109" y="40" style="font-size:80%"></text>
+      <text id="txtZ5" x="134" y="40" style="font-size:80%"></text>
+    </g>
+</svg>
+</div>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="kbrgt" viewBox="0 0 87.595329 87.595329" height="40px" width="40px">
+    <title>makes keys broader</title>
+    <circle r="44" cy="44" cx="44" id="path23" style="fill:rgba(0,255,0,0.3);stroke:#000000;stroke-width:1;" />
+    <path id="path25" d="M 44,78 V 10" style="fill:#9eff9e;stroke:#000000;stroke-width:3;stroke-linecap:round;" />
+    <path id="path27" d="M 78,44 H 10" style="fill:#9eff9e;stroke:#000000;stroke-width:3;stroke-linecap:round;" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="kblft" viewBox="0 0 87.595329 87.595329" height="40px" width="40px">
+  <title>makes keys smaller</title>
+    <circle r="44" cy="44" cx="44" id="path23" style="fill:rgba(0,255,0,0.3);stroke:#000000;stroke-width:1;" />
+    <path id="path27" d="M 78,44 H 10" style="fill:#9eff9e;stroke:#000000;stroke-width:3;stroke-linecap:round;" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="mtrsvg" viewBox="0 0 220.31308 310.88881" width="20px">
+  <g transform="translate(-168.05564,-173.54485)" id="g3537">
+    <g id="layer1">
+      <path
+         id="path9868"
+         d="m 245.73622,175.45935 -76.37696,284.7106 217.71005,0 -75.66317,-285.61445 z"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         id="path9872"
+         d="m 187.81381,391.35577 181.41126,0"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         id="path9880"
+         d="M 378.50585,249.287 290.81011,391.32898"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         transform="matrix(0.84278384,0.53825217,-0.52161495,0.85318102,0,0)"
+         y="20.876596"
+         x="442.99142"
+         height="25.758644"
+         width="19.224855"
+         id="rect9882"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:8px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 277.14286,223.79078 0,167.85714"
+         id="path9874" />
+      <path
+         id="rect10855"
+         d="m 194.64285,460.21936 28.57143,0 -6,23.21429 -16.57143,0 z"
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="m 328.64285,460.21936 28.57143,0 -6,23.21429 -16.57143,0 z"
+         id="path10858" />
+    </g>
+  </g>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="spkron" viewBox="0 0 24 24" width="24px">
+    <polygon id="spk1" points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="spk2" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="spkrof" viewBox="0 0 24 24" width="24px">
+    <polygon id="spk3" points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line id="spk4" x1="23" y1="9" x2="17" y2="15" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line id="spk5" x1="17" y1="9" x2="23" y2="15" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="atag" viewBox="0 0 62 319" preserveAspectRatio="none" width="20px">
+    <rect width="16" height="319" x="46" y="0" />
+    <rect width="32" height="319" x="0" y="0" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="btag" viewBox="0 0 62 319" preserveAspectRatio="none" width="20px">
+    <rect width="16" height="319" x="0" y="0" />
+    <rect width="32" height="319" x="30" y="0" />
+</svg>
+</body></html>

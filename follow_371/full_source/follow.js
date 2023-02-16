@@ -2770,7 +2770,7 @@ $(document).ready (function () {
     });
     $('#kwart').append ($('#mtrsvg'));
     $('#tempo').change (function () {
-        kwartTempo = $tempo.value * (curNote.met / 384);
+        kwartTempo = $tempo.value * (curNote.met / 384); // slower for sightreading
         opt.tempo = kwartTempo;
         setAudSpeed ();
     });

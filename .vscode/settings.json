@@ -1,12 +1,2 @@
 {
-    "jupyter.kernels.filter": [
-        {
-            "path": "/home/znovak/.local/share/jupyter/kernels/sgtm_env/kernel.json",
-            "type": "jupyterKernelspec"
-        },
-        {
-            "path": "/usr/share/jupyter/kernels/xonsh/kernel.json",
-            "type": "jupyterKernelspec"
-        }
-    ]
 }
